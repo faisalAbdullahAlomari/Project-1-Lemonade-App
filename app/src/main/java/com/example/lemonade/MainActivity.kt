@@ -52,10 +52,12 @@ class MainActivity : AppCompatActivity() {
         setViewElements()
         lemonImage!!.setOnClickListener {
             // TODO: call the method that handles the state when the image is clicked
+            clickLemonImage()
+
         }
         lemonImage!!.setOnLongClickListener {
             // TODO: replace 'false' with a call to the function that shows the squeeze count
-            false
+            showSnackbar()
         }
     }
 
@@ -76,6 +78,7 @@ class MainActivity : AppCompatActivity() {
      * This method determines the state and proceeds with the correct action.
      */
     private fun clickLemonImage() {
+
         // TODO: use a conditional statement like 'if' or 'when' to track the lemonadeState
         //  when the image is clicked we may need to change state to the next step in the
         //  lemonade making progression (or at least make some changes to the current state in the
@@ -96,6 +99,32 @@ class MainActivity : AppCompatActivity() {
 
         // TODO: lastly, before the function terminates we need to set the view elements so that the
         //  UI can reflect the correct state
+        when (lemonadeState){
+
+            SELECT -> {
+            lemonadeState = SQUEEZE
+            lemonSize = LemonTree().pick()
+            squeezeCount = 0
+            }
+
+            SQUEEZE -> {
+            squeezeCount++
+                lemonSize --
+                if(lemonSize == 0) {
+                    lemonadeState = DRINK
+                    lemonSize = -1
+                }
+            }
+
+            DRINK -> {
+            lemonadeState = RESTART
+            }
+
+            RESTART -> {
+                lemonadeState = SELECT
+            }
+        }
+        setViewElements()
     }
 
     /**
@@ -103,6 +132,30 @@ class MainActivity : AppCompatActivity() {
      */
     private fun setViewElements() {
         val textAction: TextView = findViewById(R.id.text_action)
+        val image: ImageView = findViewById(R.id.image_lemon_state)
+
+        when (lemonadeState){
+
+            SELECT -> {
+                textAction.text = getString(R.string.lemon_select)
+                image.setImageResource(R.drawable.lemon_tree)
+            }
+
+            SQUEEZE -> {
+                textAction.text = getString(R.string.lemon_squeeze)
+                image.setImageResource(R.drawable.lemon_squeeze)
+            }
+
+            DRINK -> {
+                textAction.text = getString(R.string.lemon_drink)
+                image.setImageResource(R.drawable.lemon_drink)
+            }
+
+            RESTART -> {
+                textAction.text = getString(R.string.lemon_empty_glass)
+                image.setImageResource(R.drawable.lemon_restart)
+            }
+        }
         // TODO: set up a conditional that tracks the lemonadeState
 
         // TODO: for each state, the textAction TextView should be set to the corresponding string from
